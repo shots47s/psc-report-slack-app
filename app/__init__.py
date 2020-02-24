@@ -5,17 +5,8 @@ from config import *
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_mail import Mail
 from slackeventsapi import SlackEventAdapter
-
-
-app = Flask(__name__)
-app.config.from_object(os.environ['APP_SETTINGS'])
-
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-
-# Function to initialize the email and logs
-from app import routes, models  # noqa
 
 
 def init_email_and_logs_error_handler(app):
@@ -59,3 +50,16 @@ def init_email_and_logs_error_handler(app):
 
       app.logger.setLevel(logging.INFO)
       app.logger.info('PSC Reporting startup')
+
+
+app = Flask(__name__)
+app.config.from_object(os.environ['APP_SETTINGS'])
+
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+mail = Mail(app)
+
+# Function to initialize the email and logs
+from app import routes, models  # noqa
+
+init_email_and_logs_error_handler(app)
